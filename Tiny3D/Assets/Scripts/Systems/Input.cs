@@ -2,12 +2,9 @@ using System.Collections.Generic;
 using Tetric3D;
 using Unity.Entities;
 using Unity.Mathematics;
-using Unity.Transforms;
-using UnityEngine;
-#if UNITY_DOTSPLAYER
-using System;
 using Unity.Tiny.Input;
-#endif
+using Unity.Transforms;
+using KeyCode = Unity.Tiny.Input.KeyCode;
 
 namespace Tiny3D
 {
@@ -17,49 +14,50 @@ namespace Tiny3D
         protected override void OnUpdate()
         {
             float4x4 matrix = float4x4.identity;
+            var inputSystem = World.GetExistingSystem<InputSystem>();
             bool updateCenterPos = false;
-            if (UnityEngine.Input.GetKeyDown(KeyCode.LeftArrow))
+            if (inputSystem.GetKeyDown(KeyCode.LeftArrow))
             {
-                matrix = float4x4.Translate(new Vector3(0, -1, 0));
+                matrix = float4x4.Translate(new float3(0, -1, 0));
             }
-            else if(UnityEngine.Input.GetKeyDown(KeyCode.RightArrow))
+            else if(inputSystem.GetKeyDown(KeyCode.RightArrow))
             {
-                matrix = float4x4.Translate(new Vector3(0, 1, 0));
+                matrix = float4x4.Translate(new float3(0, 1, 0));
             }
-            else if(UnityEngine.Input.GetKeyDown(KeyCode.UpArrow))
+            else if(inputSystem.GetKeyDown(KeyCode.UpArrow))
             {
-                matrix = float4x4.Translate(new Vector3(-1, 0, 0));
+                matrix = float4x4.Translate(new float3(-1, 0, 0));
             }
-            else if(UnityEngine.Input.GetKeyDown(KeyCode.DownArrow))
+            else if(inputSystem.GetKeyDown(KeyCode.DownArrow))
             {
-                matrix = float4x4.Translate(new Vector3(1, 0, 0));
+                matrix = float4x4.Translate(new float3(1, 0, 0));
             }
-            else if(UnityEngine.Input.GetKeyDown(KeyCode.A))
+            else if(inputSystem.GetKeyDown(KeyCode.A))
             {
                 matrix = float4x4.RotateX(math.PI / 2);
                 updateCenterPos = true;
             }
-            else if(UnityEngine.Input.GetKeyDown(KeyCode.D))
+            else if(inputSystem.GetKeyDown(KeyCode.D))
             {
                 matrix = float4x4.RotateX(-math.PI / 2);
                 updateCenterPos = true;
             }
-            else if(UnityEngine.Input.GetKeyDown(KeyCode.Q))
+            else if(inputSystem.GetKeyDown(KeyCode.Q))
             {
                 matrix = float4x4.RotateZ(math.PI / 2);
                 updateCenterPos = true;
             }
-            else if(UnityEngine.Input.GetKeyDown(KeyCode.E))
+            else if(inputSystem.GetKeyDown(KeyCode.E))
             {
                 matrix = float4x4.RotateZ(-math.PI / 2);
                 updateCenterPos = true;
             }
-            else if(UnityEngine.Input.GetKeyDown(KeyCode.W))
+            else if(inputSystem.GetKeyDown(KeyCode.W))
             {
                 matrix = float4x4.RotateY(-math.PI / 2);
                 updateCenterPos = true;
             }
-            else if(UnityEngine.Input.GetKeyDown(KeyCode.S))
+            else if(inputSystem.GetKeyDown(KeyCode.S))
             {
                 matrix = float4x4.RotateY(math.PI / 2);
                 updateCenterPos = true;
@@ -138,19 +136,19 @@ namespace Tiny3D
                 });
             }
 
-            if (UnityEngine.Input.GetKey(KeyCode.J))
+            if (inputSystem.GetKey(KeyCode.J))
             {
                 CameraControl.cameraHeight -= Time.DeltaTime * 4;
             }
-            else if (UnityEngine.Input.GetKey(KeyCode.K))
+            else if (inputSystem.GetKey(KeyCode.K))
             {
                 CameraControl.cameraHeight += Time.DeltaTime * 4;
             }
-            else if (UnityEngine.Input.GetKey(KeyCode.H))
+            else if (inputSystem.GetKey(KeyCode.H))
             {
                 CameraControl.cameraAngle += Time.DeltaTime;
             }
-            else if (UnityEngine.Input.GetKey(KeyCode.L))
+            else if (inputSystem.GetKey(KeyCode.L))
             {
                 CameraControl.cameraAngle -= Time.DeltaTime;
             }
@@ -165,12 +163,8 @@ namespace Tiny3D
                 z = dropping.cz,
                 w = 1
             };
-            float3 newPosition = new float3
-            {
-                x = matrix[0][0] * position[0] + matrix[1][0] * position[1] + matrix[2][0] * position[2] + matrix[3][0] * position[3],
-                y = matrix[0][1] * position[0] + matrix[1][1] * position[1] + matrix[2][1] * position[2] + matrix[3][1] * position[3],
-                z = matrix[0][2] * position[0] + matrix[1][2] * position[1] + matrix[2][2] * position[2] + matrix[3][2] * position[3]
-            };
+
+            float4 newPosition = math.mul(matrix, position);
             return new Cube
             {
                 x = cube.x + (int) math.round(newPosition.x - position.x),

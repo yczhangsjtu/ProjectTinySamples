@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using Tetric3D;
 using Unity.Entities;
 using Unity.Mathematics;
+using Unity.Tiny;
 using Unity.Transforms;
 
 namespace Tiny3D
@@ -17,10 +18,10 @@ namespace Tiny3D
         protected override void OnUpdate()
         {
             var level = GetSingleton<Level>();
-            Entities.WithAll<Projection>().ForEach(entity => {
-                EntityManager.DestroyEntity(entity);
-            });
             var projections = new List<Entity>();
+            Entities.WithAll<Projection>().ForEach(entity => {
+                EntityManager.AddComponent<ProjectionClear>(entity);
+            });
             Entities.WithAll<Dropping>().ForEach((ref Cube cube) => {
                 var entity = EntityManager.Instantiate(level.projectionPrefab);
                 EntityManager.AddComponentData(entity, new Projection {
