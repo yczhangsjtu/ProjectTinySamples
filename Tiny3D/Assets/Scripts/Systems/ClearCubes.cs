@@ -34,7 +34,6 @@ namespace Tiny3D
             
             if (layersToClear.Count > 0)
             {
-                layersToClear.Sort();
                 List<int> dropBy = new List<int>();
                 int j = 0;
                 for (int i = 0; i <= layersToClear[layersToClear.Count-1] + 1; i++)
