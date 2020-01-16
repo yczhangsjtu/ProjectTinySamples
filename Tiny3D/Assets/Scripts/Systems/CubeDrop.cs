@@ -19,6 +19,10 @@ namespace Tiny3D
             var level = GetSingleton<Level>();
             level.timeLeft -= level.speed * Time.DeltaTime;
             SetSingleton(level);
+            if (!level.started)
+            {
+                return;
+            }
             
             if (level.timeLeft > 0)
             {

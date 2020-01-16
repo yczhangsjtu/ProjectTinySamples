@@ -10,8 +10,11 @@ namespace Tetric3D
         public Entity projectionPrefab;
         public int initialHeight;
         public float speed;
+        public float fastSpeed;
         public int level;
         public int nextShape;
         public float timeLeft;
+        public bool reset;
+        public bool started;
     }
 }

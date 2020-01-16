@@ -171,9 +171,12 @@ MonoBehaviour:
     type: 3}
   initialHeight: 10
   speed: 1
+  fastSpeed: 10
   level: 0
   nextShape: -1
   timeLeft: 0
+  reset: 0
+  started: 0
 --- !u!1 &318965199
 GameObject:
   m_ObjectHideFlags: 0

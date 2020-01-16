@@ -10,11 +10,32 @@ namespace Tiny3D
 {
     public class Input : ComponentSystem
     {
+        protected override void OnCreate()
+        {
+            base.OnCreate();
+            RequireSingletonForUpdate<Level>();
+        }
         
         protected override void OnUpdate()
         {
-            float4x4 matrix = float4x4.identity;
+            var level = GetSingleton<Level>();
             var inputSystem = World.GetExistingSystem<InputSystem>();
+            if (!level.started)
+            {
+                if (inputSystem.GetKeyDown(KeyCode.Space))
+                {
+                    level.started = true;
+                    SetSingleton(level);
+                    GenerateNextShape.random = new Random((uint) (Time.ElapsedTime * 1000));
+                }
+
+                return;
+            }
+
+            level.speed = inputSystem.GetKey(KeyCode.Space) ? level.fastSpeed : 1;
+            SetSingleton(level);
+            
+            float4x4 matrix = float4x4.identity;
             bool updateCenterPos = false;
             if (inputSystem.GetKeyDown(KeyCode.LeftArrow))
             {
@@ -61,6 +82,16 @@ namespace Tiny3D
             {
                 matrix = float4x4.RotateY(math.PI / 2);
                 updateCenterPos = true;
+            }
+            else if(inputSystem.GetKeyDown(KeyCode.R))
+            {
+                level.reset = true;
+                SetSingleton(level);
+            }
+            else if(inputSystem.GetKeyDown(KeyCode.P))
+            {
+                level.started = false;
+                SetSingleton(level);
             }
             else
             {

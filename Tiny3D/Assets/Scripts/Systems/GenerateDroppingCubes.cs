@@ -21,6 +21,10 @@ namespace Tiny3D
             if (droppingCubeCount == 0)
             {
                 var level = GetSingleton<Level>();
+                if (!level.started)
+                {
+                    return;
+                }
                 if (level.nextShape < 0)
                 {
                     return;

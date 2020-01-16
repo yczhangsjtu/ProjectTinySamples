@@ -69,7 +69,7 @@ namespace Tiny3D
 //            }, 
         };
         
-        Random random;
+        public static Random random;
 
         protected override void OnCreate()
         {
@@ -81,6 +81,10 @@ namespace Tiny3D
         protected override void OnUpdate()
         {
             var level = GetSingleton<Level>();
+            if (!level.started)
+            {
+                return;
+            }
             if (level.nextShape >= 0)
             {
                 return;
